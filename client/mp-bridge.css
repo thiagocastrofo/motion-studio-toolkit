@@ -1,0 +1,63 @@
+/* Motion Panel screens inside Motion Studio: maps the Motion Panel tokens to the Motion Studio design system
+   (white accent, gradient surfaces) and fixes every place where text sat on the old blue accent. */
+html, html[data-appearance="dark"], html[data-appearance="light"] {
+  --bg: var(--st-bg); --bg-2: var(--st-surface); --bg-elevated: var(--st-surface);
+  --label: var(--st-text); --label-2: var(--st-text-2); --label-3: var(--st-text-3);
+  --separator: var(--st-line); --glass-edge: var(--st-line);
+  --accent: var(--st-accent); --accent-soft: var(--st-accent-soft);
+  --green: var(--st-ok); --red: var(--st-err);
+  --glass-bg: transparent; --glass-strong: var(--st-surface); --seg-on: var(--st-top-2);
+  --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", sans-serif;
+}
+#mpHold { display: none; }
+
+/* surfaces with volume */
+.tsec > .body, .catalog, .wcard, .sp-box, .langmenu, .boxmenu, .popmenu { background: var(--g-card) !important; box-shadow: var(--hl), inset 0 0 0 .5px var(--st-line), 0 2px 6px rgba(0, 0, 0, .28) !important; border: 0 !important; }
+.tsec.catalogsec .catalog { box-shadow: none !important; background: transparent !important; }
+.actionbar, .statusrow.single, .toolbar { background: var(--g-card) !important; backdrop-filter: none !important; box-shadow: var(--hl) !important; }
+.pill, .chip, .animbtns button, .search, .segmented, .stepper, .num, .txtin, select, .iconbtn.plain:hover, .sp-filters button, .ease-presets button, .expr-card {
+  background: var(--g-raised) !important; box-shadow: var(--hl), inset 0 0 0 .5px var(--st-line); }
+.segmented button.on, .segmented.small button.on { background: var(--g-accent) !important; color: var(--st-on-accent) !important; box-shadow: var(--hl-accent) !important; }
+.card .stage { box-shadow: var(--hl), inset 0 0 0 .5px var(--st-line), 0 2px 6px rgba(0, 0, 0, .3); }
+.card.sel .stage { box-shadow: 0 0 0 2px var(--st-accent), 0 4px 14px rgba(0, 0, 0, .35) !important; }
+.card.sel .cardfoot .label { color: var(--st-text) !important; }
+
+/* everything that used the blue accent as a background now uses the white gradient with dark text */
+.animbtns button.prominent:not(:disabled), .confirm, .pill.primary, .pill:active, .sp-filters button.on, .sp-row.on, .chip.on,
+.ibtn:active, .pm-item:hover:not(:disabled):not(.destructive), .langmenu button:hover, .boxmenu button:hover:not(:disabled), .cat-row.on .cat-ico {
+  background: var(--g-accent) !important; color: var(--st-on-accent) !important; box-shadow: 0 2px 8px rgba(0, 0, 0, .3), var(--hl-accent) !important; }
+.sp-row.on .sp-name, .sp-row.on .sp-sub, .sp-row.on .sp-star, .sp-row.on .sp-name mark, .chip.on small { color: var(--st-on-accent) !important; }
+.chip.on .dot { box-shadow: 0 0 0 1.5px var(--st-on-accent); }
+.langmenu button.on::before, .langmenu button.on:hover::before { color: currentColor; }
+.switch input:checked + i { background: var(--g-accent) !important; }
+.switch input:checked + i::after { background: var(--st-on-accent) !important; }
+.backbtn, .card.sel .cardfoot .label, #favFilter.on { color: var(--st-text) !important; }
+.tree .item.on { background: var(--g-raised) !important; box-shadow: var(--hl); }
+input[type=range] { background: var(--st-surface-2); }
+
+/* tools: monochrome graphite tiles with a white symbol (colour is reserved for content) */
+.tooltabs button .tile, .th-ico, .cat-ico {
+  background: linear-gradient(180deg, #55555b, #2b2b2f) !important; color: #fff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 2px 6px rgba(0, 0, 0, .35) !important; }
+html[data-appearance="light"] .tooltabs button .tile, html[data-appearance="light"] .th-ico, html[data-appearance="light"] .cat-ico {
+  background: linear-gradient(180deg, #4a4a50, #1f1f22) !important; }
+body.wide #tools .tooltabs button.on { background: var(--g-raised) !important; box-shadow: var(--hl); }
+
+/* embedded screens sit flush inside the Motion Studio page */
+#browse .browsehead { padding-top: 0; }
+#browse .split { border-top-color: var(--st-line); }
+#tools .toolnav-head { padding-top: var(--s2); }
+#edit > .toolhead { padding-top: var(--s2); }
+.ms-head .langwrap .langmenu { top: 32px; }
+.ms-head .st-icon svg { width: 16px; height: 16px; }
+#browse .animbtns button { font-size: 11.5px; padding: 0 4px; }
+
+/* new Motion Panel controls in the Motion Studio look */
+.tp-tog.on { background: var(--g-accent) !important; color: var(--st-on-accent) !important; box-shadow: var(--hl-accent); }
+.tp-tog, .sq, .addswatch { background: var(--g-raised) !important; box-shadow: var(--hl), inset 0 0 0 .5px var(--st-line); }
+.colbox { background: linear-gradient(180deg, rgba(0, 0, 0, .22), rgba(0, 0, 0, .08)); box-shadow: inset 0 1px 2px rgba(0, 0, 0, .3); }
+html[data-appearance="light"] .colbox { background: linear-gradient(180deg, #ececf1, #f6f6f9); }
+/* Workflow sections shown on the Básico tab */
+.ms-wf { display: flex; flex-direction: column; gap: 0; }
+.ms-wf .tsec > h4 { padding-left: 4px; }
+.ms-wf .boxbtn { display: none; }

@@ -1,0 +1,4 @@
+#!/bin/bash
+# Remove the previous version completely (a stale file would break the extension signature).
+rm -rf "/Library/Application Support/Adobe/CEP/extensions/com.thiago.motionstudio"
+exit 0

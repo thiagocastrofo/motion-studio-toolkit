@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionManifest Version="7.0" ExtensionBundleId="com.thiago.motionstudio" ExtensionBundleVersion="0.1.0" ExtensionBundleName="Motion Studio Toolkit"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ExtensionList>
+		<Extension Id="com.thiago.motionstudio.main" Version="0.1.0" />
+	</ExtensionList>
+	<ExecutionEnvironment>
+		<HostList>
+			<Host Name="AEFT" Version="[22.0,99.9]" />
+		</HostList>
+		<LocaleList>
+			<Locale Code="All" />
+		</LocaleList>
+		<RequiredRuntimeList>
+			<RequiredRuntime Name="CSXS" Version="11.0" />
+		</RequiredRuntimeList>
+	</ExecutionEnvironment>
+	<DispatchInfoList>
+		<Extension Id="com.thiago.motionstudio.main">
+			<DispatchInfo>
+				<Resources>
+					<MainPath>./client/index.html</MainPath>
+					<ScriptPath>./host/studio.jsx</ScriptPath>
+				</Resources>
+				<Lifecycle>
+					<AutoVisible>true</AutoVisible>
+				</Lifecycle>
+				<UI>
+					<Type>Panel</Type>
+					<Menu>Motion Studio Toolkit</Menu>
+					<Geometry>
+						<Size><Height>720</Height><Width>360</Width></Size>
+						<MinSize><Height>320</Height><Width>280</Width></MinSize>
+					</Geometry>
+					<Icons>
+						<Icon Type="Normal">./icons/panel_light.png</Icon>
+						<Icon Type="RollOver">./icons/panel_light_hover.png</Icon>
+						<Icon Type="DarkNormal">./icons/panel_dark.png</Icon>
+						<Icon Type="DarkRollOver">./icons/panel_dark_hover.png</Icon>
+					</Icons>
+				</UI>
+			</DispatchInfo>
+		</Extension>
+	</DispatchInfoList>
+</ExtensionManifest>

@@ -1,0 +1,112 @@
+/* ==========================================================================
+   Motion Panel design layer
+   Applies the principles described in vendor/apple-design-system (governance/apple-design-language-rule.md):
+   clarity, deference, depth, hierarchy, harmony and consistency, plus the "glass" material idea.
+   Own CSS only: no Apple fonts, SF Symbols or kit files are used or redistributed. The font stack below
+   only asks for the operating system's own UI font.
+   Loaded after style.css; it refines tokens and components without changing the HTML.
+   ========================================================================== */
+
+:root {
+  /* spacing on a 4-pt grid */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px;
+  /* concentric corner radii: inner radius = outer radius - padding */
+  --r-sheet: 18px; --r-box: 14px; --r-row: 10px; --r-control: 8px; --r-small: 6px; --r-pill: 999px;
+  /* type scale (hierarchy through size and weight, not colour tricks) */
+  --t-title: 17px; --t-headline: 13px; --t-body: 13px; --t-callout: 12.5px; --t-sub: 12px; --t-foot: 11.5px; --t-caption: 10.5px;
+  /* motion */
+  --ease: cubic-bezier(.2, .8, .2, 1); --dur: .18s;
+  /* glass material (dark appearance) */
+  --glass-bg: rgba(40, 40, 43, .66);
+  --glass-strong: rgba(48, 48, 52, .82);
+  --glass-edge: rgba(255, 255, 255, .09);
+  --glass-hi: rgba(255, 255, 255, .07);
+  --glass-shadow: 0 10px 30px rgba(0, 0, 0, .38), 0 1px 2px rgba(0, 0, 0, .25);
+  --seg-on: #636366;
+  --seg-on-shadow: 0 1px 3px rgba(0, 0, 0, .3), inset 0 .5px 0 rgba(255, 255, 255, .12);
+  --stage-a: #3a3a3c; --stage-b: #1f1f21;
+  --focus: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+  --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", sans-serif;
+}
+
+/* ---- light appearance (follows After Effects' interface brightness; see bridge.js) */
+html[data-appearance="light"] {
+  --bg: #f2f2f7; --bg-2: #ffffff; --bg-elevated: #ffffff;
+  --fill: rgba(120, 120, 128, .20); --fill-2: rgba(120, 120, 128, .12); --fill-3: rgba(118, 118, 128, .07);
+  --separator: rgba(60, 60, 67, .22);
+  --label: rgba(0, 0, 0, .88); --label-2: rgba(60, 60, 67, .64); --label-3: rgba(60, 60, 67, .34);
+  --accent: #007aff; --accent-soft: rgba(0, 122, 255, .12);
+  --green: #34c759; --red: #ff3b30; --yellow: #f5b800;
+  --glass-bg: rgba(255, 255, 255, .68); --glass-strong: rgba(255, 255, 255, .86);
+  --glass-edge: rgba(0, 0, 0, .07); --glass-hi: rgba(255, 255, 255, .85);
+  --glass-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 1px 2px rgba(0, 0, 0, .06);
+  --seg-on: #ffffff; --seg-on-shadow: 0 1px 3px rgba(0, 0, 0, .14), 0 0 0 .5px rgba(0, 0, 0, .04);
+  --stage-a: #ffffff; --stage-b: #e5e5ea;
+}
+html[data-appearance="light"] .glyph { box-shadow: 0 4px 10px rgba(0, 122, 255, .25); }
+
+body { font-family: var(--font); font-size: var(--t-body); }
+
+/* ---- glass material for chrome that floats over content (toolbars, bars, menus, popovers) */
+.toolbar, .actionbar, .tabsbar, .statusrow.single {
+  background: var(--glass-bg);
+  backdrop-filter: saturate(180%) blur(22px);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+  box-shadow: inset 0 .5px 0 var(--glass-hi);
+}
+.langmenu, .boxmenu, .sp-box {
+  background: var(--glass-strong);
+  backdrop-filter: saturate(180%) blur(26px);
+  -webkit-backdrop-filter: saturate(180%) blur(26px);
+  border: .5px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow), inset 0 .5px 0 var(--glass-hi);
+}
+.langmenu, .boxmenu { border-radius: 12px; padding: var(--s1); }
+.langmenu button, .boxmenu button { border-radius: var(--r-control); }   /* 12 - 4 = 8: concentric */
+.sp-box { border-radius: var(--r-sheet); }
+.sp-overlay { background: rgba(0, 0, 0, .32); }
+
+/* ---- hierarchy */
+.toolhead b, .crumb { font-size: var(--t-title); font-weight: 650; letter-spacing: -0.022em; }
+.toolhead span, .hint { font-size: var(--t-foot); }
+.tsec > h4 { font-size: var(--t-caption); letter-spacing: .05em; color: var(--label-2); padding: var(--s3) var(--s3) var(--s2); }
+.label, .cardfoot .label { font-size: var(--t-sub); }
+
+/* ---- grouped boxes and rows: concentric corners and gentle depth */
+.tsec {
+  border-radius: var(--r-box);
+  border: .5px solid var(--glass-edge);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+}
+.tsec .body { padding: 2px var(--s3) var(--s3); gap: var(--s2); }
+.catalog, .list, .wcard { border-radius: var(--r-row); }        /* 14 - 4 */
+.cat-ico, .tooltabs button .ico { border-radius: var(--r-control); }
+.card { border-radius: var(--r-box); border: .5px solid var(--glass-edge); box-shadow: 0 1px 2px rgba(0, 0, 0, .14); }
+.stage { background: radial-gradient(120% 90% at 50% 0%, var(--stage-a), var(--stage-b)); }
+
+/* ---- controls */
+.segmented { border-radius: 10px; padding: 2px; }
+.segmented button { border-radius: var(--r-control); transition: background var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+.segmented button.on { background: var(--seg-on); box-shadow: var(--seg-on-shadow); }
+.pill { border-radius: var(--r-control); transition: transform var(--dur) var(--ease), background var(--dur) var(--ease); }
+.pill.primary, .animbtns button { border-radius: var(--r-pill); }
+.pill:active, .animbtns button:active:not(:disabled), .iconbtn:active, .sp-row:active { transform: scale(.97); }
+.iconbtn { border-radius: 9px; transition: background var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.iconbtn:hover { background: var(--fill); color: var(--label); }
+.search { border-radius: 10px; }
+.chips button, .sp-filters button { transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
+.tooltabs button { border-radius: 10px; transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
+.tree .item { border-radius: var(--r-control); transition: background var(--dur) var(--ease); }
+.card { transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+.card:hover { transform: translateY(-1px); }
+
+/* ---- accessibility: visible keyboard focus everywhere */
+:focus { outline: none; }
+:focus-visible { box-shadow: var(--focus); border-radius: var(--r-control); }
+button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, .card:focus-visible { box-shadow: var(--focus); }
+
+/* ---- motion: honour "reduce motion" */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+  .card:hover { transform: none; }
+}

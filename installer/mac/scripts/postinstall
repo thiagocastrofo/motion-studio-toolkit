@@ -1,0 +1,10 @@
+#!/bin/bash
+# Enable CEP debug mode for the logged-in user (After Effects 2022+ uses CSXS 11-13).
+USER_NAME="$(stat -f%Su /dev/console)"
+if [ -n "$USER_NAME" ] && [ "$USER_NAME" != "root" ]; then
+  for v in 11 12 13; do
+    sudo -u "$USER_NAME" defaults write "com.adobe.CSXS.$v" PlayerDebugMode 1 || true
+  done
+fi
+chmod -R a+rX "/Library/Application Support/Adobe/CEP/extensions/com.thiago.motionstudio"
+exit 0

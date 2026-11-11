@@ -1,0 +1,96 @@
+# Builds the installers. Push a tag like v1.0.0 to publish a GitHub Release with:
+#   MotionStudioToolkit-<v>.zxp            (signed extension, for ZXP installers)
+#   MotionStudioToolkit-<v>-Windows.exe    (Inno Setup, current user, no admin)
+#   MotionStudioToolkit-<v>-macOS.pkg      (all users, /Library/Application Support/Adobe/CEP/extensions)
+# "Run workflow" (manual) builds the same files as downloadable artifacts, without a release.
+# Secrets: ZXP_CERT_BASE64 (the .p12 certificate in base64) and ZXP_CERT_PASSWORD.
+name: Build installers
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Version
+        shell: pwsh
+        run: |
+          $v = if ($env:GITHUB_REF -like "refs/tags/v*") { $env:GITHUB_REF_NAME.Substring(1) } else { "0.0.$env:GITHUB_RUN_NUMBER" }
+          "APP_VERSION=$v" >> $env:GITHUB_ENV
+      - name: Stage extension
+        run: node scripts/stage.js dist/stage ${{ env.APP_VERSION }}
+      - name: Sign .zxp
+        shell: pwsh
+        env:
+          ZXP_CERT_BASE64: ${{ secrets.ZXP_CERT_BASE64 }}
+          ZXP_CERT_PASSWORD: ${{ secrets.ZXP_CERT_PASSWORD }}
+        run: |
+          if (-not $env:ZXP_CERT_BASE64) { throw "Missing secret ZXP_CERT_BASE64" }
+          $urls = "https://raw.githubusercontent.com/Adobe-CEP/CEP-Resources/master/ZXPSignCMD/4.1.103/win64/ZXPSignCmd.exe",
+                  "https://raw.githubusercontent.com/Adobe-CEP/CEP-Resources/main/ZXPSignCMD/4.1.103/win64/ZXPSignCmd.exe"
+          foreach ($u in $urls) { try { Invoke-WebRequest $u -OutFile ZXPSignCmd.exe; break } catch { } }
+          if (-not (Test-Path ZXPSignCmd.exe)) { throw "Could not download ZXPSignCmd" }
+          [IO.File]::WriteAllBytes("$PWD\cert.p12", [Convert]::FromBase64String($env:ZXP_CERT_BASE64))
+          New-Item -ItemType Directory -Force dist\out | Out-Null
+          $zxp = "dist\out\MotionStudioToolkit-$env:APP_VERSION.zxp"
+          .\ZXPSignCmd.exe -sign dist\stage $zxp cert.p12 $env:ZXP_CERT_PASSWORD -tsa http://timestamp.digicert.com
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path $zxp)) { .\ZXPSignCmd.exe -sign dist\stage $zxp cert.p12 $env:ZXP_CERT_PASSWORD }
+          if ($LASTEXITCODE -ne 0) { throw "Signing failed" }
+          .\ZXPSignCmd.exe -verify $zxp
+          Remove-Item cert.p12
+          Copy-Item $zxp dist\ext.zip
+          Expand-Archive dist\ext.zip -DestinationPath dist\extension
+      - name: Windows installer
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress; }
+          & $iscc "/DAppVersion=$env:APP_VERSION" installer\windows\MotionStudioToolkit.iss
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/out/*
+
+  mac:
+    needs: windows
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows
+          path: dist/in
+      - name: macOS installer
+        run: |
+          ZXP=$(ls dist/in/*.zxp | head -1)
+          V=$(basename "$ZXP" .zxp | sed 's/^MotionStudioToolkit-//')
+          bash installer/mac/build-pkg.sh "$ZXP" "$V" dist/out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: dist/out/*.pkg
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, mac]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/windows/*.zxp
+            dist/windows/*.exe
+            dist/macos/*.pkg

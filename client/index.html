@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motion Studio Toolkit</title>
+<!-- Motion Panel styles first (its screens are embedded), then the Motion Studio design system and the bridge that re-skins them. -->
+<link rel="stylesheet" href="mp/style.css">
+<link rel="stylesheet" href="mp/design.css">
+<link rel="stylesheet" href="mp/hierarchy.css">
+<link rel="stylesheet" href="ds.css">
+<link rel="stylesheet" href="mp-bridge.css">
+</head>
+<body>
+  <!-- Template: tools/compose.js injects the Motion Panel screens here (animation library, tools, edit). -->
+  <!--MP:HOLD-->
+  <div class="ms-app" id="app"></div>
+  <!--MP:OVERLAY-->
+  <script>window.MST_EMBED = true; /* Motion Panel tools: skip what Motion Studio already has on Básico */</script>
+  <script src="mp/presets.js"></script>
+  <script src="mp/bridge.js"></script>
+  <script src="mp/i18n.js"></script>
+  <script src="mp/boxes.js"></script>
+  <script src="mp/search.js"></script>
+  <script src="mp/main.js"></script>
+  <script src="mp/tools.js"></script>
+  <script src="mp/build.js"></script>
+  <script src="mp/edit.js"></script>
+  <script src="mp/overlay.js"></script>
+  <script src="icons.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

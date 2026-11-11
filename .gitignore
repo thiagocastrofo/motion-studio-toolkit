@@ -1,0 +1,15 @@
+# build output
+dist/
+build/
+icons/app.ico
+# signing material (stored as GitHub secrets, never committed)
+*.p12
+*.pfx
+cert-password.txt
+signing/
+ZXPSignCmd*
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+node_modules/
